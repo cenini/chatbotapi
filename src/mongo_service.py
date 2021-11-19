@@ -1,9 +1,10 @@
 from pymongo import MongoClient
 from models import DialogItem
+from storage_provider import StorageProvider
 import pymongo
 from bson.objectid import ObjectId
 
-class MongoService:
+class MongoService(StorageProvider):
     itemsPerPage = 30
     
     def __init__(self, connectionString: str = "mongodb://admin:password@localhost:27017"):
@@ -40,4 +41,10 @@ class MongoService:
     
     def insert(self, dialogItem: DialogItem):
         # Inserts the provided dialogItem into the database
-        return self.dialogItems.insert_one(dialogItem)
+        return self.dialogItems.insert_one(dialogItem.__dict__)
+
+    def delete_customer_dialogs(self, customerId):
+        # Deletes all dialogItems for the provided customer
+        query = {"customerId": customerId}
+        
+        return self.dialogItems.delete_many(query)
