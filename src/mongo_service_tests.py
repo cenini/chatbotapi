@@ -6,14 +6,14 @@ import uuid
 class MongoServiceTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-        self.mongoService = MongoService()        
+        self.mongoService = MongoService("mongodb+srv://admin:Niginago93@cluster0.dvdcp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
         
     def test_insert(self):
         id = str(uuid.uuid1())
         
-        result = self.mongoService.insert(DialogItem(id, id, "text", "EN"))
+        acknowledged = self.mongoService.insert(DialogItem(id, id, "text", "EN"))
         
-        self.assertTrue(result.acknowledged)
+        self.assertTrue(acknowledged)
                                  
     def test_get(self):
         result, bookmark = self.mongoService.get()
@@ -57,10 +57,10 @@ class MongoServiceTests(unittest.TestCase):
         self.mongoService.insert(DialogItem(customerId, dialogId1, "other text", "EN"))
         self.mongoService.insert(DialogItem(customerId, dialogId2, "next dialog", "EN"))  
               
-        deleteResult = self.mongoService.delete_customer_dialogs(customerId=customerId) 
+        deleteAcknowledged = self.mongoService.delete_customer_dialogs(dialogId1) 
         getResult, bookmark = self.mongoService.get(customerId=customerId)
         
-        self.assertTrue(deleteResult.acknowledged)
+        self.assertTrue(deleteAcknowledged)
         self.assertTrue(len(getResult) == 0)
         
 if __name__ == '__main__':

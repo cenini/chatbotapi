@@ -41,10 +41,16 @@ class MongoService(StorageProvider):
     
     def insert(self, dialogItem: DialogItem):
         # Inserts the provided dialogItem into the database
-        return self.dialogItems.insert_one(dialogItem.__dict__)
+        result = self.dialogItems.insert_one(dialogItem.__dict__)
+        return result.acknowledged
 
-    def delete_customer_dialogs(self, customerId):
-        # Deletes all dialogItems for the provided customer
-        query = {"customerId": customerId}
+    def delete_customer_dialogs(self, dialogId):
+        # Deletes all dialogItems for the customer having the
+        # provided dialog
+        customerResult = list(self.dialogItems.find({"dialogId": dialogId}).limit(1))
+        if (len(customerResult) > 0):
+            query = {"customerId": customerResult[0]["customerId"]}
+            deleteResult = self.dialogItems.delete_many(query)
+            return deleteResult.acknowledged
         
-        return self.dialogItems.delete_many(query)
+        return False
