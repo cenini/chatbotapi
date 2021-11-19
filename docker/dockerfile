@@ -1,0 +1,8 @@
+FROM python:3.9.9
+
+WORKDIR /chatbotapi
+COPY src/ .
+
+RUN pip install -r requirements.txt
+
+CMD [ "python", "./main.py" ]

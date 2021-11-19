@@ -6,7 +6,8 @@ from distutils import util
 import uvicorn
 
 chatbotapi = FastAPI()
-storageProvider = MongoService()
+connectionString = "mongodb://root:apassword@mongo:27017"
+storageProvider = MongoService(connectionString)
 
 @chatbotapi.post("/data/{customerId}/{dialogId}")
 async def push_dialog(customerId: str, dialogId: str, chatItem: ChatItem):
