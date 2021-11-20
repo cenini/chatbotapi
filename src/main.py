@@ -4,10 +4,10 @@ from models import ChatItem, DialogItem
 from mongo_service import MongoService
 from distutils import util
 import uvicorn
+import os
 
 chatbotapi = FastAPI()
-connectionString = "mongodb://root:apassword@mongo:27017"
-storageProvider = MongoService(connectionString)
+storageProvider = MongoService(os.environ["MONGO_CONNECTION_STRING"])
 
 @chatbotapi.post("/data/{customerId}/{dialogId}")
 async def push_dialog(customerId: str, dialogId: str, chatItem: ChatItem):
