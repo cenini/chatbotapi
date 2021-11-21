@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import Body, FastAPI
+from fastapi.exceptions import HTTPException
 from models import ChatItem, DialogItem
 from mongo_service import MongoService
 from distutils import util
@@ -19,6 +20,10 @@ async def push_consent(dialogId: str, consent: str = Body(None, regex="^true$|^f
     acknowledged = True
     if (not util.strtobool(consent)):
         acknowledged = storageProvider.delete_customer_dialogs(dialogId)
+        
+    if (not acknowledged):
+        raise HTTPException(status_code=404, detail="Could not find the dialog")
+    
     return {"acknowledged": acknowledged}
 
 @chatbotapi.get("/data/")
