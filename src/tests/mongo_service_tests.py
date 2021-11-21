@@ -4,12 +4,17 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import unittest
 from models import DialogItem
 from mongo_service import MongoService
+from mongo_database_populator import MongoDatabasePopulator
 import uuid
 
 class MongoServiceTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.mongoService = MongoService(os.environ["MONGO_CONNECTION_STRING"])
+        # Insert a test item
+        self.mongoService.dialogItems.remove()
+        databasePopulator = MongoDatabasePopulator()
+        databasePopulator.populate()
         
     def test_insert(self):
         id = str(uuid.uuid1())
